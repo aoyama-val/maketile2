@@ -24,8 +24,8 @@
         
         var layer = L.tileLayer('./tile/{z}/{x}_{y}.png', {
           noWrap: true, // trueの場合、左右リピートしない
-          //maxNativeZoom: 12,
-          //bounds: [[-0.692138671875, 0], [0, 0.692138671875]]
+          maxNativeZoom: <%= @max_zoom %>,
+          bounds: <%= @bounds %>
         }).addTo(map);
 
         var hash = new L.Hash(map);

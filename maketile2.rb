@@ -1,5 +1,7 @@
 # 任意の画像をLeaflet用のタイル化するスクリプト
 
+require "erb"
+
 class MakeTile
   def execute(cmd)
     puts "Execute: #{cmd}"
@@ -43,7 +45,7 @@ class MakeTile
     execute("convert #{file} -background transparent -gravity southeast -splice #{padding_w}x#{padding_h} #{file}")
   end
 
-  def make(file, tile_dir: "tile", min_zoom: 8, max_zoom: nil, tile_size: 256)
+  def make(file, tile_dir: "tile", min_zoom: 8, max_zoom: nil, tile_size: 256, debug: false)
     puts "\n#make"
 
     # 元ファイルのサイズ
@@ -61,6 +63,7 @@ class MakeTile
     puts "orig_h    = #{orig_h}"
     puts "orig_size = #{orig_size}"
     puts "base      = #{base}"
+    puts "max_zoom  = #{max_zoom}"
 
     # 既存のタイルディレクトリを削除
     execute("rm -rf #{tile_dir}")
@@ -85,10 +88,17 @@ class MakeTile
       execute("convert #{tmp_z} -crop #{tile_size}x#{tile_size} -set filename:tile '%[fx:page.x/#{tile_size}]_%[fx:page.y/#{tile_size}]' #{tile_dir}/#{z}/%[filename:tile].png")
     end
 
-    puts <<~EOF
+    unless debug
+      # 一時ファイルを削除
+      execute("rm -rf tmp_*.png")
+    end
 
-      bounds: [[#{-1 * orig_h.to_f / 2**base}, 0], [0, #{orig_w.to_f / 2**base}]]
-    EOF
+    # index.html生成
+    @max_zoom = max_zoom
+    puts "max_zoom  = #{max_zoom}"
+    @bounds = "[[#{-1 * orig_h.to_f / 2**base}, 0], [0, #{orig_w.to_f / 2**base}]]"
+    rendered = ERB.new(File.read("index.html.erb")).result(binding)
+    File.write("index.html", rendered)
   end
 end
 
