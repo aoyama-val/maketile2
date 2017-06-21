@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>imageOverlayのテスト</title>
+    <link rel="stylesheet" href="./leaflet-1.0.3/leaflet.css" />
+    <script src="./leaflet-1.0.3/leaflet.js"></script>
+    <script src="./leaflet-hash.js"></script>
+    <style>
+      html, body { height: 100%; margin: 0; }
+      #map { height: 100%; width: 100%;}
+    </style>
+    <script>
+      var map;
+      var marker;
+      function init() {
+        map = L.map('map', {
+          maxZoom: 18,
+          minZoom: -5,
+          crs: L.CRS.Simple,
+          attributionControl: false,
+        });
+
+        var bounds = [[0, 0], [2315, 2315]];  // 元画像のサイズと同じ
+        var image = L.imageOverlay('uqm_map_full.png', bounds).addTo(map);
+        map.fitBounds(bounds);
+      };
+    </script>
+  </head>
+  <body onload="init();">
+    <div id="map"></div>
+  </body>
+</html>
+<!-- vim: set ts=2 sts=2 sw=2 et: -->
