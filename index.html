@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>タイルテスト</title>
+    <link rel="stylesheet" href="../leaflet-1.0.3/leaflet.css" />
+    <script src="../leaflet-1.0.3/leaflet.js"></script>
+    <script src="../leaflet-hash.js"></script>
+    <style>
+      html, body { height: 100%; margin: 0; }
+      #map { height: 100%; width: 100%;}
+    </style>
+    <script>
+      var map;
+      var marker;
+      function init() {
+        var zoom = 12;
+
+        map = L.map('map', {
+          maxZoom: 18,
+          minZoom: 8,
+          crs: L.CRS.Simple,
+        });
+        map.setView([-0.5, 0.5], zoom);
+        
+        var layer = L.tileLayer('./tile/{z}/{x}_{y}.png', {
+          noWrap: true, // trueの場合、左右リピートしない
+          //maxNativeZoom: 12,
+          //bounds: [[-0.692138671875, 0], [0, 0.692138671875]]
+        }).addTo(map);
+
+        var hash = new L.Hash(map);
+
+        marker = L.marker(map.getCenter()).addTo(map);
+        map.on('click', function(e) {
+          marker.setLatLng(e.latlng);
+          console.log(e.latlng);
+        });
+      };
+    </script>
+  </head>
+  <body onload="init();">
+    <div id="map"></div>
+  </body>
+</html>
+<!-- vim: set ts=2 sts=2 sw=2 et: -->
