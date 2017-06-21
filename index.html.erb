@@ -19,6 +19,7 @@
           maxZoom: 18,
           minZoom: 8,
           crs: L.CRS.Simple,
+          attributionControl: false,  // 右下のLeafletのロゴを消す
         });
         map.setView(<%= @center %>, zoom);
         
@@ -28,8 +29,10 @@
           bounds: <%= @bounds %>
         }).addTo(map);
 
+        // URLに現在の座標を追加する
         var hash = new L.Hash(map);
 
+        // クリックイベントのハンドラ
         marker = L.marker(map.getCenter()).addTo(map);
         map.on('click', function(e) {
           marker.setLatLng(e.latlng);
