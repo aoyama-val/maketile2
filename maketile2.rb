@@ -94,9 +94,12 @@ class MakeTile
     end
 
     # index.html生成
+    bounds_x = -1 * orig_h.to_f / 2 ** base
+    bounds_y = orig_w.to_f / 2 ** base
+    @center = "[#{bounds_x / 2}, #{bounds_y / 2}]"
     @max_zoom = max_zoom
     puts "max_zoom  = #{max_zoom}"
-    @bounds = "[[#{-1 * orig_h.to_f / 2**base}, 0], [0, #{orig_w.to_f / 2**base}]]"
+    @bounds = "[[#{bounds_x}, 0], [0, #{bounds_y}]]"
     rendered = ERB.new(File.read("index.html.erb")).result(binding)
     File.write("index.html", rendered)
   end
@@ -111,5 +114,5 @@ if __FILE__ == $0
   # 入力ファイル
   file = ARGV[0]
   maketile = MakeTile.new
-  maketile.make(file)
+  maketile.make(file, debug: true)
 end

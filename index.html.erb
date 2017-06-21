@@ -20,7 +20,7 @@
           minZoom: 8,
           crs: L.CRS.Simple,
         });
-        map.setView([-0.5, 0.5], zoom);
+        map.setView(<%= @center %>, zoom);
         
         var layer = L.tileLayer('./tile/{z}/{x}_{y}.png', {
           noWrap: true, // trueの場合、左右リピートしない
