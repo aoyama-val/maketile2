@@ -4,7 +4,7 @@ require "erb"
 
 class MakeTile
   def execute(cmd)
-    puts "Execute: #{cmd}"
+    puts "実行: #{cmd}"
     system(cmd)
   end
 
@@ -20,6 +20,7 @@ class MakeTile
   # 指定画像を縦横256の倍数になるよう透明余白を追加する（ファイルを上書き保存する）
   def splice(file, tile_size)
     puts "\n#splice"
+    puts "指定画像を縦横256の倍数になるよう透明余白を追加する（ファイルを上書き保存する）"
 
     orig_w = `identify -format %w #{file}`.to_i
     orig_h = `identify -format %h #{file}`.to_i
@@ -45,8 +46,11 @@ class MakeTile
     execute("convert #{file} -background transparent -gravity southeast -splice #{padding_w}x#{padding_h} #{file}")
   end
 
-  def make(file, tile_dir: "tile", min_zoom: 8, max_zoom: nil, tile_size: 256, debug: false)
+  def make(file, tile_dir: "tile", min_zoom: 8, max_zoom: nil, tile_size: 256, debug: false, tmp_dir: "./tmp")
     puts "\n#make"
+    puts "作成開始"
+
+    Dir.mkdir(tmp_dir) unless Dir.exist?(tmp_dir)
 
     # 元ファイルのサイズ
     orig_w = `identify -format %w #{file}`.to_i
@@ -72,7 +76,7 @@ class MakeTile
     (min_zoom..max_zoom).each do |z|
       puts "\nz = #{z}"
       execute("mkdir -p #{tile_dir}/#{z}")
-      tmp_z = "tmp_#{z}.png"
+      tmp_z = "#{tmp_dir}/tmp_#{z}.png"
       scale = 2.0 ** (z - base)
 
       # リサイズ
@@ -89,16 +93,15 @@ class MakeTile
     end
 
     unless debug
-      # 一時ファイルを削除
-      execute("rm -rf tmp_*.png")
+      puts "一時ファイルを削除"
+      execute("rm -rf #{tmp_dir}/tmp_*.png")
     end
 
-    # index.html生成
+    puts "index.htmlを生成"
     bounds_x = -1 * orig_h.to_f / 2 ** base
     bounds_y = orig_w.to_f / 2 ** base
     @center = "[#{bounds_x / 2}, #{bounds_y / 2}]"
     @max_zoom = max_zoom
-    puts "max_zoom  = #{max_zoom}"
     @bounds = "[[#{bounds_x}, 0], [0, #{bounds_y}]]"
     rendered = ERB.new(File.read("index.html.erb")).result(binding)
     File.write("index.html", rendered)
