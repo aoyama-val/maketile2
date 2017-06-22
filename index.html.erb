@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>タイルテスト</title>
     <link rel="stylesheet" href="./leaflet-1.0.3/leaflet.css" />
     <script src="./leaflet-1.0.3/leaflet.js"></script>
@@ -25,8 +27,10 @@
         
         var layer = L.tileLayer('./tile/{z}/{x}_{y}.png', {
           noWrap: true, // trueの場合、左右リピートしない
-          maxNativeZoom: <%= @max_zoom %>,
-          bounds: <%= @bounds %>
+          updateWhenIdle: false,  // falseの場合、モバイルでもスワイプ中にタイル読み込みする
+          keepBuffer: 100,    // 表示範囲外になったタイルをアンロードしない
+          maxNativeZoom: <%= @max_zoom %>,  // タイルが存在する最大ズーム
+          bounds: <%= @bounds %>  // タイルが存在する範囲
         }).addTo(map);
 
         // URLに現在の座標を追加する
@@ -36,7 +40,7 @@
         marker = L.marker(map.getCenter()).addTo(map);
         map.on('click', function(e) {
           marker.setLatLng(e.latlng);
-          console.log(e.latlng);
+          console.log(e.latlng.lat + ", " +  e.latlng.lng);
         });
       };
     </script>
