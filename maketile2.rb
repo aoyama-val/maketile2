@@ -69,7 +69,7 @@ class MakeTile
     puts "base      = #{base}"
     puts "max_zoom  = #{max_zoom}"
 
-    # 既存のタイルディレクトリを削除
+    puts "既存のタイルディレクトリを削除"
     execute("rm -rf #{tile_dir}")
 
     # 各ズームのタイル生成
@@ -79,7 +79,7 @@ class MakeTile
       tmp_z = "#{tmp_dir}/tmp_#{z}.png"
       scale = 2.0 ** (z - base)
 
-      # リサイズ
+      puts "リサイズ"
       execute("convert #{file} -resize #{scale * 100}% #{tmp_z}")
 
       # 256の倍数になるよう透明余白追加
@@ -89,6 +89,7 @@ class MakeTile
       # -crop   切り出す
       # -set    ImageMagickの変数をセット
       # $[fx:]  計算
+      puts "256x256で切り出す"
       execute("convert #{tmp_z} -crop #{tile_size}x#{tile_size} -set filename:tile '%[fx:page.x/#{tile_size}]_%[fx:page.y/#{tile_size}]' #{tile_dir}/#{z}/%[filename:tile].png")
     end
 
